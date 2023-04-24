@@ -12,9 +12,7 @@ public class GenderByKeyword extends DataAnalyzer {
 
 	@Override
 	public MyHashTable<String, Integer> getDistByKeyword(String keyword) {
-		// ADD YOUR CODE BELOW THIS
 		return null;
-		//ADD YOUR CODE ABOVE THIS
 	}
 
 	@Override

@@ -9,6 +9,7 @@ public class RatingDistributionBySchool extends DataAnalyzer {
 
 	private MyHashTable<String, MyHashTable<String, Integer>> compilation;
 	private MyHashTable<String, MyHashTable<String, Double>> scoresComp;
+	private MyHashTable<String, MyHashTable<String, Double>> finalTable;
 
 	public RatingDistributionBySchool(Parser p) {
 		super(p);
@@ -16,24 +17,24 @@ public class RatingDistributionBySchool extends DataAnalyzer {
 
 	@Override
 	public MyHashTable<String, Integer> getDistByKeyword(String keyword) {
-		// ADD YOUR CODE BELOW THIS
+
 		return compilation.get(keyword.toLowerCase().trim());
-		//ADD YOUR CODE ABOVE THIS
+
 	}
 
 	@Override
 	public void extractInformation() {
 		compilation = new MyHashTable<>();
-		MyHashTable<String, MyHashTable<String, Integer>> transition = new MyHashTable<>();
+		scoresComp = new MyHashTable<>();
+		finalTable = new MyHashTable<>();
 
-		//String keyword = "A";
-		int count = 0;
-		Double totalScore = 0.0;
 		for (String[] array : parser.data) {
 			String schoolName = array[parser.fields.get("school_name")].toLowerCase().trim();
 			String professorName = array[parser.fields.get("professor_name")].toLowerCase().trim();
 			Double studentScore = Double.valueOf(array[parser.fields.get("student_star")]);
 			//String keyword = professorName+"\n"+0.0;
+			int count = 0;
+			Double totalScore = 0.0;
 			if (compilation.get(schoolName) == null) {
 				MyHashTable<String, Integer> profTable = new MyHashTable<>();
 				compilation.put(schoolName, profTable);
@@ -56,12 +57,14 @@ public class RatingDistributionBySchool extends DataAnalyzer {
 			String schoolName = array[parser.fields.get("school_name")].toLowerCase().trim();
 			String professorName = array[parser.fields.get("professor_name")].toLowerCase().trim();
 			Double studentScore = Double.valueOf(array[parser.fields.get("student_star")]);
+			int count = 0;
+			Double totalScore = 0.0;
 			//String keyword = professorName+"\n"+0.0;
 			if (scoresComp.get(schoolName) == null) {
 				MyHashTable<String, Double> profTable = new MyHashTable<>();
 				scoresComp.put(schoolName, profTable);
 			}
-			if(compilation.get(schoolName).get(professorName) == null){
+			if(scoresComp.get(schoolName).get(professorName) == null){
 				MyHashTable<String, Double> profTable = scoresComp.get(schoolName);
 				totalScore = 0.0;
 				profTable.put(professorName, totalScore);
@@ -73,6 +76,21 @@ public class RatingDistributionBySchool extends DataAnalyzer {
 			scoresComp.put(schoolName,profTable);
 		}
 
+		for(String key:compilation.getKeySet()){
+			MyHashTable<String, Integer> profs = compilation.get(key);
+			MyHashTable<String, Double> scores = scoresComp.get(key);
+			for(String name: profs.getKeySet()){
+				String oldKey = name;
+				int numCount = profs.get(name);
+				Double totalscores = scores.get(name);
+				Double avg = totalscores/(double)numCount;
+				String newKey = oldKey+"\n"+ avg;
+				profs.remove(oldKey);
+				profs.put(newKey,numCount);
+
+			}
+			compilation.put(key, profs);
+		}
 
 	}
 

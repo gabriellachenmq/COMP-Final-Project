@@ -8,6 +8,7 @@ import java.util.HashMap;
 public class RatingDistributionBySchool extends DataAnalyzer {
 
 	private MyHashTable<String, MyHashTable<String, Integer>> compilation;
+	private MyHashTable<String, MyHashTable<String, Double>> scoresComp;
 
 	public RatingDistributionBySchool(Parser p) {
 		super(p);
@@ -23,7 +24,9 @@ public class RatingDistributionBySchool extends DataAnalyzer {
 	@Override
 	public void extractInformation() {
 		compilation = new MyHashTable<>();
-		String keyword = "A";
+		MyHashTable<String, MyHashTable<String, Integer>> transition = new MyHashTable<>();
+
+		//String keyword = "A";
 		int count = 0;
 		Double totalScore = 0.0;
 		for (String[] array : parser.data) {
@@ -35,22 +38,41 @@ public class RatingDistributionBySchool extends DataAnalyzer {
 				MyHashTable<String, Integer> profTable = new MyHashTable<>();
 				compilation.put(schoolName, profTable);
 			}
-			if(compilation.get(schoolName).get(keyword) == null){
+			if(compilation.get(schoolName).get(professorName) == null){
 				MyHashTable<String, Integer> profTable = compilation.get(schoolName);
 				//keyword = professorName+"\n"+0.0;
-				profTable.put(keyword, count);
+				count = 0;
+				profTable.put(professorName, count);
 			}
 			MyHashTable<String, Integer> profTable = compilation.get(schoolName);
-			count = (int) profTable.get(keyword);
+			count = (int) profTable.get(professorName);
 			count++;
-			profTable.remove(keyword);
-			totalScore+=studentScore;
-			Double avg = totalScore/(double) count;
-			keyword = professorName+"\n"+avg;
-			profTable.put(keyword,count);
+			//totalScore+=studentScore;
+			//Double avg = totalScore/(double) count;
+			profTable.put(professorName,count);
 			compilation.put(schoolName,profTable);
-
 		}
+		for (String[] array : parser.data) {
+			String schoolName = array[parser.fields.get("school_name")].toLowerCase().trim();
+			String professorName = array[parser.fields.get("professor_name")].toLowerCase().trim();
+			Double studentScore = Double.valueOf(array[parser.fields.get("student_star")]);
+			//String keyword = professorName+"\n"+0.0;
+			if (scoresComp.get(schoolName) == null) {
+				MyHashTable<String, Double> profTable = new MyHashTable<>();
+				scoresComp.put(schoolName, profTable);
+			}
+			if(compilation.get(schoolName).get(professorName) == null){
+				MyHashTable<String, Double> profTable = scoresComp.get(schoolName);
+				totalScore = 0.0;
+				profTable.put(professorName, totalScore);
+			}
+			MyHashTable<String, Double> profTable = scoresComp.get(schoolName);
+			totalScore = (double) profTable.get(professorName);
+			totalScore+=studentScore;
+			profTable.put(professorName,totalScore);
+			scoresComp.put(schoolName,profTable);
+		}
+
 
 	}
 

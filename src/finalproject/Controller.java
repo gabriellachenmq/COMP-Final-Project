@@ -32,7 +32,7 @@ public class Controller {
 		System.out.println("init");
 
 		System.out.print("parsing data...");
-		parser = new Parser("/src/RateMyProf_Data_Gendered_Sample.csv");
+		parser = new Parser("/src/finalproject/RateMyProf_Data_Gendered_Sample.csv");
 		parser.read();
 
 		System.out.println("done");

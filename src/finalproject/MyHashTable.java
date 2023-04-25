@@ -127,14 +127,15 @@ public class MyHashTable<K,V> implements Iterable<MyPair<K,V>> {
 		for (int i = 0; i < newCapacity; i++) {
 			newBuckets.add(new LinkedList<>());
 		}
+		this.capacity = newCapacity;
 		for (LinkedList<MyPair<K, V>> bucket : this.buckets) {
 			for (MyPair<K, V> pair : bucket) {
-				int newIndex = pair.getKey().hashCode() % newCapacity;
+				int newIndex = hashFunction(pair.getKey());
 				newBuckets.get(newIndex).add(pair);
 			}
 		}
 		this.buckets = newBuckets;
-		this.capacity = newCapacity;
+
 	}
 
 

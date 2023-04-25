@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 import java.util.function.Supplier;
-import java.util.stream.Collector.*;
-import java.util.stream.Stream.*;
 import java.time.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -399,7 +397,7 @@ class HashTableTests {
 // make sure to change it to your filepath in parserInit()
 // the tests below use the sample csv for speed
 class DataAnalyzerTests {
-    Parser p = new Parser("/RateMyProf_Data_Gendered_Sample.csv");
+    Parser p = new Parser("/src/finalproject/RateMyProf_Data_Gendered_Sample.csv");
 
     // normal operation
     @Test
@@ -724,7 +722,7 @@ class TimeTests {
     private final String[] YEAR = new String[]{"1999", "2000", "2001", "2002", "2003"};
     private final String[] RATINGS = new String[]{"1", "2", "3", "4", "5"};
 
-    Parser p = new Parser("/RateMyProf_Data_Gendered.csv");
+    Parser p = new Parser("/finalproject/RateMyProf_Data_Gendered.csv");
 
     private void parserInitFields() {
         p.fields = new HashMap<>();

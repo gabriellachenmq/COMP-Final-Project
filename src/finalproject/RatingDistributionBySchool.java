@@ -27,7 +27,6 @@ public class RatingDistributionBySchool extends DataAnalyzer {
 		compilation = new MyHashTable<>();
 		allTable = new MyHashTable<>();
 
-
 		for (String[] array : parser.data) {
 			String schoolName = array[parser.fields.get("school_name")].toLowerCase().trim();
 			String professorName = array[parser.fields.get("professor_name")].toLowerCase().trim();
@@ -65,8 +64,6 @@ public class RatingDistributionBySchool extends DataAnalyzer {
 			}
 			compilation.put(schools.getKey(), profTable);
 		}
-
-
 
 	}
 

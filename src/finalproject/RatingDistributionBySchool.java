@@ -8,8 +8,7 @@ import java.util.HashMap;
 public class RatingDistributionBySchool extends DataAnalyzer {
 
 	private MyHashTable<String, MyHashTable<String, Integer>> compilation;
-	private MyHashTable<String, MyHashTable<String, Double>> scoresComp;
-	private MyHashTable<String, MyHashTable<String, Double>> finalTable;
+	private MyHashTable<String, MyHashTable<String, ArrayList<Double>>> allTable;
 
 	public RatingDistributionBySchool(Parser p) {
 		super(p);
@@ -24,87 +23,55 @@ public class RatingDistributionBySchool extends DataAnalyzer {
 
 	@Override
 	public void extractInformation() {
+
 		compilation = new MyHashTable<>();
-		scoresComp = new MyHashTable<>();
-		finalTable = new MyHashTable<>();
+		allTable = new MyHashTable<>();
+
 
 		for (String[] array : parser.data) {
 			String schoolName = array[parser.fields.get("school_name")].toLowerCase().trim();
 			String professorName = array[parser.fields.get("professor_name")].toLowerCase().trim();
 			Double studentScore = Double.valueOf(array[parser.fields.get("student_star")]);
-			//String keyword = professorName+"\n"+0.0;
-			int count = 0;
-			Double totalScore = 0.0;
-			if (compilation.get(schoolName) == null) {
-				MyHashTable<String, Integer> profTable = new MyHashTable<>();
-				compilation.put(schoolName, profTable);
+			MyHashTable<String, ArrayList<Double>> profs = new MyHashTable<>();
+			ArrayList<Double> scores = new ArrayList<>();
+
+			profs = allTable.get(schoolName);
+			if(profs == null){
+				allTable.put(schoolName, new MyHashTable<>());
+				profs = allTable.get(schoolName);
 			}
-			if(compilation.get(schoolName).get(professorName) == null){
-				MyHashTable<String, Integer> profTable = compilation.get(schoolName);
-				//keyword = professorName+"\n"+0.0;
-				count = 0;
-				profTable.put(professorName, count);
+
+			scores = profs.get(professorName);
+			if(scores == null){
+				profs.put(professorName,new ArrayList<>());
+				scores = profs.get(professorName);
 			}
-			MyHashTable<String, Integer> profTable = compilation.get(schoolName);
-			count = (int) profTable.get(professorName);
-			count++;
-			//totalScore+=studentScore;
-			//Double avg = totalScore/(double) count;
-			profTable.put(professorName,count);
-			compilation.put(schoolName,profTable);
-		}
-		for (String[] array : parser.data) {
-			String schoolName = array[parser.fields.get("school_name")].toLowerCase().trim();
-			String professorName = array[parser.fields.get("professor_name")].toLowerCase().trim();
-			Double studentScore = Double.valueOf(array[parser.fields.get("student_star")]);
-			int count = 0;
-			Double totalScore = 0.0;
-			//String keyword = professorName+"\n"+0.0;
-			if (scoresComp.get(schoolName) == null) {
-				MyHashTable<String, Double> profTable = new MyHashTable<>();
-				scoresComp.put(schoolName, profTable);
-			}
-			if(scoresComp.get(schoolName).get(professorName) == null){
-				MyHashTable<String, Double> profTable = scoresComp.get(schoolName);
-				totalScore = 0.0;
-				profTable.put(professorName, totalScore);
-			}
-			MyHashTable<String, Double> profTable = scoresComp.get(schoolName);
-			totalScore = (double) profTable.get(professorName);
-			totalScore+=studentScore;
-			profTable.put(professorName,totalScore);
-			scoresComp.put(schoolName,profTable);
+			scores.add(studentScore);
 		}
 
-		for(String key:compilation.getKeySet()){
-			MyHashTable<String, Integer> profs = compilation.get(key);
-			MyHashTable<String, Double> scores = scoresComp.get(key);
-			for(String name: profs.getKeySet()){
-				String oldKey = name;
-				int numCount = profs.get(name);
-				Double totalscores = scores.get(name);
-				Double avg = totalscores/(double)numCount;
-				String newKey = oldKey+"\n"+ avg;
-				profs.remove(oldKey);
-				profs.put(newKey,numCount);
-
+		for(MyPair<String, MyHashTable<String, ArrayList<Double>>> schools : allTable){
+			MyHashTable<String, ArrayList<Double>> prof = schools.getValue();
+			MyHashTable<String, Integer> profTable = new MyHashTable<>();
+			for(String name: prof.getKeySet()){
+				ArrayList<Double> scoresA = prof.get(name);
+				Double totalScores = 0.0;
+				for(Double score : scoresA){
+					totalScores += score;
+				}
+				int count = scoresA.size();
+				Double avg = roundToTwoDecimalPlaces(totalScores/(double)count);
+				String key = name+"\n"+ avg;
+				profTable.put(key, count);
 			}
-			compilation.put(key, profs);
+			compilation.put(schools.getKey(), profTable);
 		}
+
+
 
 	}
 
-	private String getRatingCategory(Double rating) {
-		if (rating >= 1 && rating < 2) {
-			return "1";
-		} else if (rating >= 2 && rating < 3) {
-			return "2";
-		} else if (rating >= 3 && rating < 4) {
-			return "3";
-		} else if (rating >= 4 && rating < 5) {
-			return "4";
-		} else {
-			return "5";
-		}
+	private  double roundToTwoDecimalPlaces(double value) {
+		return Math.round(value * 100.0) / 100.0;
 	}
+
 }

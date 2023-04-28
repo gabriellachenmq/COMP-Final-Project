@@ -29,7 +29,9 @@ public class GenderByKeyword extends DataAnalyzer {
 			String[] words = comment.split("\\s+");
 			ArrayList<String> tokens = new ArrayList<>();
 			for (String word : words) {
-				tokens.add(word);
+				if(!tokens.contains(word)) {
+					tokens.add(word);
+				}
 			}
 			for (String item : tokens) {
 				if (wordTable.get(item) == null){

@@ -54,10 +54,6 @@ public class RatingByGender extends DataAnalyzer{
 			compilation.put("difficulty", genderDif);
 			compilation.put("quality", genderQual);
 		}
-
-
-
-
 	}
 
 	private MyHashTable<String, Integer> getRatingTable(){

@@ -12,7 +12,6 @@ public class RatingDistributionByProf extends DataAnalyzer {
 	@Override
 	public MyHashTable<String, Integer> getDistByKeyword(String keyword) {
 		return compilation.get(keyword.toLowerCase().trim());
-		//ADD YOUR CODE ABOVE THIS
 	}
 
 	@Override
